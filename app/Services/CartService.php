@@ -28,6 +28,10 @@ class CartService
             return ['ok' => false, 'reason' => 'invalid_quantity'];
         }
 
+        if ($qty > 10) {
+            return ['ok' => false, 'reason' => 'max_add_exceeded'];
+        }
+
         $product = $this->resolveProductOrNull($productId);
         if (!$product) {
             return ['ok' => false, 'reason' => 'invalid_product'];

@@ -29,7 +29,7 @@ class UserCartRepository
         $cart = $this->getOrCreateCart($userId);
 
         return CartItem::query()
-            ->where('user_id', $cart->id)
+            ->where('cart_id', $cart->id)
             ->pluck('quantity', 'product_id')
             ->mapWithKeys(function ($qty, $productId) {
                 return [(int) $productId => (int) $qty];

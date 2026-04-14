@@ -1,4 +1,18 @@
 <x-app-layout>
+    <style>
+        .add-to-cart-btn {
+            background-color: #374151;
+            border-color: #374151;
+            color: #ffffff;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+        }
+    </style>
+
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
@@ -34,40 +48,44 @@
                         <article class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
                             <div class="aspect-[4/3] w-full rounded-md bg-gray-100 mb-4"></div>
 
-                            <h3 class="text-base font-semibold text-gray-900">{{ $product->name }}</h3>
-                            <p class="mt-1 text-sm text-gray-500">{{ $product->description ?: 'No description yet.' }}</p>
-
-                            <div class="mt-4 flex items-center justify-between text-sm">
-                                <span class="font-semibold text-gray-900">${{ number_format($product->price_cents / 100, 2) }}</span>
+                            <div class="flex items-start justify-between gap-3">
+                                <h3 class="text-base font-semibold text-gray-900">{{ $product->name }}</h3>
                                 @if ($product->stock < 10)
-                                    <span class="text-gray-500">Only {{ $product->stock }} in stock!</span>
+                                    <span class="text-xs font-medium text-amber-700">Only {{ $product->stock }} left in stock!</span>
                                 @endif
                             </div>
+                            <p class="mt-1 text-sm text-gray-500">{{ $product->description ?: 'No description yet.' }}</p>
 
-                            @if (Route::has('cart.add'))
-                                <form method="POST" action="{{ route('cart.add') }}" class="mt-4 flex items-center gap-2">
-                                    @csrf
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <div class="mt-4 flex items-center text-sm">
+                                <span class="font-semibold text-gray-900">${{ number_format($product->price_cents / 100, 2) }}</span>
+                            </div>
+
+                            <form method="POST" action="{{ route('cart.add') }}" class="mt-4">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                @php
+                                    $maxQty = max(1, min(10, $product->stock));
+                                @endphp
+                                <div class="flex items-center justify-end gap-2">
+                                    <label for="qty-{{ $product->id }}" class="text-sm text-gray-700">Quantity:</label>
                                     <input
+                                        id="qty-{{ $product->id }}"
                                         type="number"
                                         name="qty"
                                         min="1"
-                                        max="{{ $product->stock }}"
+                                        max="{{ $maxQty }}"
                                         value="1"
-                                        class="w-20 rounded-md border-gray-300 text-sm"
+                                        class="w-24 rounded-md border-gray-300 text-sm"
                                     >
                                     <button
                                         type="submit"
-                                        class="inline-flex items-center rounded-md border border-indigo-600 bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                                        class="add-to-cart-btn inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium"
                                     >
-                                        Add
+                                        Add to cart
                                     </button>
-                                </form>
-                            @else
-                                <div class="mt-4 rounded-md border border-dashed border-gray-300 px-3 py-2 text-xs text-gray-500">
-                                    Cart actions will appear here after cart routes are added.
                                 </div>
-                            @endif
+                            </form>
+                                
                         </article>
                     @endforeach
                 </div>
