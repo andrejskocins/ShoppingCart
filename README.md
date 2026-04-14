@@ -1,59 +1,131 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Shopping Cart
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## OVERVIEW
+--------
+This project is a shopping cart web application built with Laravel. It provides core e-commerce functionality, allowing users to browse products and manage a persistent shopping cart. The system supports different experiences for guest and authenticated users, including a seamless cart merge process upon login.
 
-## About Laravel
+## FEATURES
+--------
+- **User Authentication**: Standard register, login, and logout functionality.
+- **Product Catalog**: A clean, grid-based interface for browsing products.
+- **Dual Cart System**:
+    - **Guest Cart**: Visitors can add items to a temporary cart stored in a browser cookie.
+    - **Authenticated Cart**: Registered users have their cart contents saved to their account in the database.
+- **Automatic Cart Merging**: When a guest with items in their cart logs in, their guest cart is automatically merged with their user cart.
+- **Stock Validation**: Item quantities are validated against available product stock during cart operations.
+- **Comprehensive Test Suite**: Includes feature tests to ensure the reliability of the core cart functionality.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## TECHNOLOGIES
+------------
+- PHP / Laravel Framework
+- Blade Templating Engine
+- Tailwind CSS
+- SQLite (for development)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## PROJECT STRUCTURE
+-----------------
+```
+shopping_cart/
+├── app/
+│   ├── Http/Controllers/  # Application controllers
+│   │   ├── CartController.php
+│   │   └── ProductController.php
+│   ├── Listeners/         # Event listeners
+│   │   └── MergeGuestCartAfterLogin.php
+│   ├── Models/            # Eloquent database models
+│   │   ├── Cart.php
+│   │   ├── CartItem.php
+│   │   ├── Product.php
+│   │   └── User.php
+│   └── Services/          # Business logic services
+│       ├── CartMergeService.php
+│       ├── CartService.php
+│       ├── GuestCartRepository.php
+│       └── UserCartRepository.php
+├── database/
+│   ├── migrations/        # Database schema migrations
+│   └── seeders/           # Database seeders
+├── resources/
+│   └── views/             # Blade templates
+├── routes/
+│   └── web.php            # Web URL routing
+└── tests/
+    └── Feature/           # Feature tests
+        └── Cart/
+            └── CartFlowTest.php
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## DATABASE MODELS
+---------------
+- **User**: Stores user account information (name, email, password). Provided by Laravel Breeze.
+- **Product**: Stores product details, including `name`, `description`, `price_cents`, and `stock`.
+- **Cart**: Represents a shopping cart, linked to a `User` via a `user_id`.
+- **CartItem**: A pivot model representing a `Product` within a `Cart`, storing the `quantity`.
 
-## Learning Laravel
+## INSTALLATION
+------------
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd shopping_cart
+    ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+2.  **Install dependencies:**
+    ```bash
+    composer install
+    npm install
+    ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3.  **Set up your environment:**
+    *   Copy the `.env.example` file to a new file named `.env`.
+    *   Update the `DB_*` variables if you are not using the default `database.sqlite`.
+    ```bash
+    cp .env.example .env
+    touch database/database.sqlite
+    ```
 
-## Laravel Sponsors
+4.  **Generate an application key:**
+    ```bash
+    php artisan key:generate
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5.  **Run database migrations and seeders:**
+    ```bash
+    php artisan migrate --seed
+    ```
 
-### Premium Partners
+6.  **Build frontend assets:**
+    ```bash
+    npm run dev
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## USAGE
+-----
+1.  **Start the development server:**
+    ```bash
+    php artisan serve
+    ```
+2.  Navigate to `http://127.0.0.1:8000`.
+3.  Browse products and add them to the cart as a guest.
+4.  Register a new account or log in.
+5.  Observe that the guest cart items are merged into your authenticated user cart.
+6.  Manage items in the cart view.
 
-## Contributing
+## URL ENDPOINTS
+-------------
+- `/`: Homepage with all products.
+- `/cart`: View the shopping cart.
+- `/login`: User login page.
+- `/register`: New user registration page.
+- `/profile`: User profile page.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**API Endpoints (used by forms):**
+- `POST /cart/items`: Add an item to the cart.
+- `PATCH /cart/items/{productId}`: Update an item's quantity in the cart.
+- `DELETE /cart/items/{productId}`: Remove an item from the cart.
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## NOTES
+-----
+- The application is seeded with sample product data.
+- The guest cart is stored in a cookie named `guest_cart_v1`.
+- All core cart logic is extensively tested in `tests/Feature/Cart/CartFlowTest.php`.
