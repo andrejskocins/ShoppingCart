@@ -13,12 +13,14 @@ WORKDIR /var/www/html
 
 # Install PHP deps first (better layer caching)
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
 # Install frontend deps and build assets
 COPY package.json package-lock.json* ./
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
+RUN composer dump-autoload --optimize
+RUN php artisan package:discover --ansi
 RUN npm run build
 
 # Laravel runtime prep
