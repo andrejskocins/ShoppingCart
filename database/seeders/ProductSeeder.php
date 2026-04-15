@@ -49,15 +49,19 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $row) {
-            Product::create([
-                'name' => $row['name'],
-                'slug' => Str::slug($row['name']),
-                'description' => 'Portfolio demo product',
-                'price_cents' => $row['price_cents'],
-                'stock' => $row['stock'],
-                'image_url' => null,
-                'is_active' => true,
-            ]);
+            $slug = Str::slug($row['name']);
+
+            Product::query()->updateOrCreate(
+                ['slug' => $slug],
+                [
+                    'name' => $row['name'],
+                    'description' => 'Portfolio demo product',
+                    'price_cents' => $row['price_cents'],
+                    'stock' => $row['stock'],
+                    'image_url' => null,
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }
